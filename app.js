@@ -1,5 +1,6 @@
 var createError = require("http-errors");
 var express = require("express");
+const mongoose = require("mongoose");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
@@ -7,6 +8,21 @@ var logger = require("morgan");
 var indexRouter = require("./routes/index");
 
 var app = express();
+
+if (process.env.NODE_ENV === "development") {
+  require("dotenv").config();
+}
+
+mongoose.connect(process.env.DATABASE_URI, {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useFindAndModify: false,
+  useCreateIndex: true
+});
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", () => console.log("connection"));
 
 app.use(logger("dev"));
 app.use(express.json());
