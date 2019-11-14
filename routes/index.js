@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const Painting = require("../models/Painting");
 const authController = require("./controllers/authController");
+const paintingController = require("./controllers/paintingController");
 
 require("dotenv").config();
 
@@ -11,13 +11,20 @@ router.get("/", (req, res) => {
 
 router.post("/signIn", authController.signIn, authController.createToken);
 
-router.post("/painting", async (req, res) => {
-  await new Painting({
-    users: "TEST",
-    path: req.body.donePaths
-  }).save();
+router.get("/user/:id", authController.verifyToken, authController.getUserInfo);
 
-  res.send({ result: "ok" });
-});
+router.post(
+  "/painting",
+  authController.verifyToken,
+  paintingController.savePainting
+);
+
+router.get(
+  "/paintings/:id",
+  authController.verifyToken,
+  paintingController.getPainting
+);
+
+router.get("/paintings", authController.verifyToken, paintingController.getAll);
 
 module.exports = router;
