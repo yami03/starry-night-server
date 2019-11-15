@@ -20,11 +20,15 @@ router.post(
 );
 
 router.get(
+  "/paintings/:longitude/:latitude",
+  authController.verifyToken,
+  paintingController.getAll
+);
+
+router.get(
   "/paintings/:id",
   authController.verifyToken,
   paintingController.getPainting
 );
-
-router.get("/paintings", authController.verifyToken, paintingController.getAll);
 
 module.exports = router;

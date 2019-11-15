@@ -16,11 +16,38 @@ exports.savePainting = async (req, res) => {
 };
 
 exports.getAll = async (req, res) => {
+  const coords = [req.params.longitude, req.params.latitude];
+  console.log(coords);
+
   try {
-    const paintings = await Painting.find();
+    // let paintings = await Painting.find({
+    //   location: {
+    //     $near: {
+    //       $geometry: {
+    //         type: "Point",
+    //         coordinates: coords
+    //       },
+    //       $minDistance: 0,
+    //       $maxDistance: 10000
+    //     }
+    //   }
+    // });
+    const paintings = await Painting.find({
+      location: {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: coords
+          },
+          $minDistance: 0,
+          $maxDistance: 10000
+        }
+      }
+    });
 
     res.send({ paintings });
-  } catch {
+  } catch (err) {
+    console.log(err.message);
     res.status(400).send({ result: "error" });
   }
 };
